@@ -10,7 +10,7 @@ import sys
 import os
 
 # Add mock_server to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'mock_server'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "mock_server"))
 
 
 # ============================================================================
@@ -26,6 +26,7 @@ SHUTDOWN_TIMEOUT = 5
 # Fixtures
 # ============================================================================
 
+
 @pytest.fixture(scope="session")
 def mock_server():
     """
@@ -34,12 +35,21 @@ def mock_server():
     """
     # Start the server
     server_process = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "mock_server.main:app", "--host", "0.0.0.0", "--port", "8000"],
+        [
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "mock_server.main:app",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8000",
+        ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        cwd=os.path.dirname(__file__)
+        cwd=os.path.dirname(__file__),
     )
-    
+
     # Wait for server to be ready
     start_time = time.time()
     while time.time() - start_time < STARTUP_TIMEOUT:
@@ -52,9 +62,9 @@ def mock_server():
     else:
         server_process.terminate()
         raise RuntimeError("Mock server failed to start")
-    
+
     yield BASE_URL
-    
+
     # Cleanup: Stop the server
     server_process.terminate()
     try:
@@ -73,9 +83,7 @@ def base_url(mock_server):
 def api_client(base_url):
     """Provide configured requests session"""
     session = requests.Session()
-    session.headers.update({
-        "Content-Type": "application/json"
-    })
+    session.headers.update({"Content-Type": "application/json"})
     return session, base_url
 
 
@@ -84,9 +92,7 @@ def sample_chat_request():
     """Sample chat completion request payload"""
     return {
         "model": "furiosa-ai/Llama-3.1-8B-Instruct-FP8",
-        "messages": [
-            {"role": "user", "content": "What is the capital of France?"}
-        ]
+        "messages": [{"role": "user", "content": "What is the capital of France?"}],
     }
 
 
@@ -95,7 +101,7 @@ def sample_completion_request():
     """Sample completion request payload"""
     return {
         "model": "furiosa-ai/Llama-3.1-8B-Instruct-FP8",
-        "prompt": "The capital of France is"
+        "prompt": "The capital of France is",
     }
 
 
@@ -104,15 +110,14 @@ def invalid_model_request():
     """Request with invalid model name"""
     return {
         "model": "invalid-model-name",
-        "messages": [
-            {"role": "user", "content": "Hello"}
-        ]
+        "messages": [{"role": "user", "content": "Hello"}],
     }
 
 
 # ============================================================================
 # Helper Functions
 # ============================================================================
+
 
 def assert_valid_chat_response(response_json: dict):
     """Assert that response has valid chat completion structure"""

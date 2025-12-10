@@ -15,13 +15,15 @@ from typing import Optional
 # Mock SamplingParams (Simulating furiosa_llm.SamplingParams)
 # ============================================================================
 
+
 @dataclass
 class MockSamplingParams:
     """
     Simulates furiosa_llm.SamplingParams
-    
+
     Based on Furiosa SDK 2025.3.1 specification
     """
+
     n: int = 1
     best_of: int = 1
     repetition_penalty: float = 1.0
@@ -35,11 +37,11 @@ class MockSamplingParams:
     max_tokens: int = 16
     min_tokens: int = 0
     logprobs: Optional[int] = None
-    
+
     def __post_init__(self):
         """Validate parameters after initialization"""
         self._validate()
-    
+
     def _validate(self):
         """Validate parameter values"""
         if self.n < 1:
@@ -64,6 +66,7 @@ class MockSamplingParams:
 # Tests
 # ============================================================================
 
+
 class TestSamplingParamsDefaults:
     """Test SamplingParams Default Values"""
 
@@ -71,7 +74,7 @@ class TestSamplingParamsDefaults:
     def test_default_values(self):
         """Test that default values are correctly set"""
         params = MockSamplingParams()
-        
+
         assert params.n == 1
         assert params.best_of == 1
         assert params.temperature == 1.0
@@ -86,12 +89,9 @@ class TestSamplingParamsDefaults:
     def test_custom_values(self):
         """Test setting custom parameter values"""
         params = MockSamplingParams(
-            temperature=0.7,
-            top_p=0.9,
-            top_k=50,
-            max_tokens=100
+            temperature=0.7, top_p=0.9, top_k=50, max_tokens=100
         )
-        
+
         assert params.temperature == 0.7
         assert params.top_p == 0.9
         assert params.top_k == 50
@@ -209,19 +209,13 @@ class TestSamplingParamsBeamSearch:
     @pytest.mark.sdk
     def test_beam_search_with_length_penalty(self):
         """Test beam search with length penalty"""
-        params = MockSamplingParams(
-            use_beam_search=True,
-            best_of=4,
-            length_penalty=0.8
-        )
+        params = MockSamplingParams(use_beam_search=True, best_of=4, length_penalty=0.8)
         assert params.length_penalty == 0.8
 
     @pytest.mark.sdk
     def test_beam_search_with_early_stopping(self):
         """Test beam search with early stopping"""
         params = MockSamplingParams(
-            use_beam_search=True,
-            best_of=4,
-            early_stopping=True
+            use_beam_search=True, best_of=4, early_stopping=True
         )
         assert params.early_stopping is True

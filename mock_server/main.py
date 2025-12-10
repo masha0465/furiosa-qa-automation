@@ -15,13 +15,14 @@ import json
 app = FastAPI(
     title="Furiosa LLM Mock Server",
     description="Mock server for Furiosa LLM OpenAI-Compatible API testing",
-    version="2025.3.1"
+    version="2025.3.1",
 )
 
 
 # ============================================================================
 # Request/Response Models (Based on Furiosa API Spec)
 # ============================================================================
+
 
 class ChatMessage(BaseModel):
     role: str
@@ -127,7 +128,7 @@ MOCK_MODELS = [
         artifact_id="llama-3.1-8b-instruct-fp8-v1",
         max_prompt_len=4096,
         max_context_len=8192,
-        runtime_config={"bucket_size": 128, "tensor_parallel_size": 4}
+        runtime_config={"bucket_size": 128, "tensor_parallel_size": 4},
     ),
     ModelInfo(
         id="furiosa-ai/DeepSeek-R1-Distill-Llama-8B",
@@ -135,20 +136,19 @@ MOCK_MODELS = [
         artifact_id="deepseek-r1-distill-llama-8b-v1",
         max_prompt_len=4096,
         max_context_len=8192,
-        runtime_config={"bucket_size": 128, "tensor_parallel_size": 4}
-    )
+        runtime_config={"bucket_size": 128, "tensor_parallel_size": 4},
+    ),
 ]
 
 VERSION_INFO = VersionInfo(
-    furiosa_llm="0.1.0",
-    furiosa_compiler="2025.3.1",
-    furiosa_runtime="2025.3.1"
+    furiosa_llm="0.1.0", furiosa_compiler="2025.3.1", furiosa_runtime="2025.3.1"
 )
 
 
 # ============================================================================
 # API Endpoints
 # ============================================================================
+
 
 @app.post("/v1/chat/completions", response_model=ChatCompletionResponse)
 async def chat_completions(request: ChatCompletionRequest):
@@ -158,13 +158,12 @@ async def chat_completions(request: ChatCompletionRequest):
     """
     if request.stream:
         return StreamingResponse(
-            generate_chat_stream(request),
-            media_type="text/event-stream"
+            generate_chat_stream(request), media_type="text/event-stream"
         )
-    
+
     # Mock response generation
     response_content = generate_mock_response(request.messages[-1].content)
-    
+
     return ChatCompletionResponse(
         id=f"chatcmpl-{uuid.uuid4().hex[:8]}",
         created=int(time.time()),
@@ -173,14 +172,15 @@ async def chat_completions(request: ChatCompletionRequest):
             ChatCompletionChoice(
                 index=0,
                 message=ChatMessage(role="assistant", content=response_content),
-                finish_reason="stop"
+                finish_reason="stop",
             )
         ],
         usage={
             "prompt_tokens": sum(len(m.content.split()) for m in request.messages),
             "completion_tokens": len(response_content.split()),
-            "total_tokens": sum(len(m.content.split()) for m in request.messages) + len(response_content.split())
-        }
+            "total_tokens": sum(len(m.content.split()) for m in request.messages)
+            + len(response_content.split()),
+        },
     )
 
 
@@ -192,28 +192,21 @@ async def completions(request: CompletionRequest):
     """
     if request.stream:
         return StreamingResponse(
-            generate_completion_stream(request),
-            media_type="text/event-stream"
+            generate_completion_stream(request), media_type="text/event-stream"
         )
-    
+
     response_text = generate_mock_response(request.prompt)
-    
+
     return CompletionResponse(
         id=f"cmpl-{uuid.uuid4().hex[:8]}",
         created=int(time.time()),
         model=request.model,
-        choices=[
-            CompletionChoice(
-                index=0,
-                text=response_text,
-                finish_reason="stop"
-            )
-        ],
+        choices=[CompletionChoice(index=0, text=response_text, finish_reason="stop")],
         usage={
             "prompt_tokens": len(request.prompt.split()),
             "completion_tokens": len(response_text.split()),
-            "total_tokens": len(request.prompt.split()) + len(response_text.split())
-        }
+            "total_tokens": len(request.prompt.split()) + len(response_text.split()),
+        },
     )
 
 
@@ -292,6 +285,7 @@ async def health_check():
 # Helper Functions
 # ============================================================================
 
+
 def generate_mock_response(prompt: str) -> str:
     """Generate mock response based on prompt"""
     if "capital" in prompt.lower() and "france" in prompt.lower():
@@ -308,21 +302,23 @@ async def generate_chat_stream(request: ChatCompletionRequest):
     """Generate streaming response for chat completions"""
     response_content = generate_mock_response(request.messages[-1].content)
     words = response_content.split()
-    
+
     for i, word in enumerate(words):
         chunk = {
             "id": f"chatcmpl-{uuid.uuid4().hex[:8]}",
             "object": "chat.completion.chunk",
             "created": int(time.time()),
             "model": request.model,
-            "choices": [{
-                "index": 0,
-                "delta": {"content": word + " " if i < len(words) - 1 else word},
-                "finish_reason": None if i < len(words) - 1 else "stop"
-            }]
+            "choices": [
+                {
+                    "index": 0,
+                    "delta": {"content": word + " " if i < len(words) - 1 else word},
+                    "finish_reason": None if i < len(words) - 1 else "stop",
+                }
+            ],
         }
         yield f"data: {json.dumps(chunk)}\n\n"
-    
+
     yield "data: [DONE]\n\n"
 
 
@@ -330,24 +326,27 @@ async def generate_completion_stream(request: CompletionRequest):
     """Generate streaming response for completions"""
     response_text = generate_mock_response(request.prompt)
     words = response_text.split()
-    
+
     for i, word in enumerate(words):
         chunk = {
             "id": f"cmpl-{uuid.uuid4().hex[:8]}",
             "object": "text_completion.chunk",
             "created": int(time.time()),
             "model": request.model,
-            "choices": [{
-                "index": 0,
-                "text": word + " " if i < len(words) - 1 else word,
-                "finish_reason": None if i < len(words) - 1 else "stop"
-            }]
+            "choices": [
+                {
+                    "index": 0,
+                    "text": word + " " if i < len(words) - 1 else word,
+                    "finish_reason": None if i < len(words) - 1 else "stop",
+                }
+            ],
         }
         yield f"data: {json.dumps(chunk)}\n\n"
-    
+
     yield "data: [DONE]\n\n"
 
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
