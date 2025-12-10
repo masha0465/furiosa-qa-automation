@@ -1,0 +1,22 @@
+# Furiosa QA Automation - Requirements
+# Test Framework
+pytest==8.3.4
+pytest-html==4.1.1
+pytest-cov==4.1.0
+
+# Mock Server
+fastapi==0.115.6
+uvicorn==0.32.1
+pydantic==2.10.3
+
+# HTTP Client
+requests==2.32.3
+httpx==0.28.1
+
+# Reporting & Visualization
+pandas==2.2.3
+matplotlib==3.9.3
+
+# Code Quality
+black==24.10.0
+isort==5.13.2
