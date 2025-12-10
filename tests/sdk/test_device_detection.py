@@ -6,11 +6,11 @@ Note: These tests simulate NPU device detection without actual hardware.
 In production, these would interface with furiosa.runtime.get_devices()
 """
 
-import pytest
-from unittest.mock import Mock, patch
 from dataclasses import dataclass
 from typing import List, Optional
+from unittest.mock import Mock, patch
 
+import pytest
 
 # ============================================================================
 # Mock Device Classes (Simulating furiosa.runtime)

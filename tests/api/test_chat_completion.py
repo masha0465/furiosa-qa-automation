@@ -9,9 +9,10 @@ Covers:
 - Response structure validation
 """
 
+import json
+
 import pytest
 import requests
-import json
 
 from conftest import assert_valid_chat_response
 

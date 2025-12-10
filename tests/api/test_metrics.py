@@ -7,8 +7,9 @@ Covers:
 - Furiosa-specific metrics validation
 """
 
-import pytest
 import re
+
+import pytest
 
 
 class TestMetricsAPI:

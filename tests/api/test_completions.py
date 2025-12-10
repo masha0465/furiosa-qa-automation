@@ -8,8 +8,9 @@ Covers:
 - Parameter validation
 """
 
-import pytest
 import json
+
+import pytest
 
 from conftest import assert_valid_completion_response
 

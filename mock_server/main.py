@@ -4,13 +4,14 @@ Based on Furiosa SDK 2025.3.1 API Specification
 https://developer.furiosa.ai/latest/en/furiosa_llm/furiosa-llm-serve.html
 """
 
+import json
 import time
 import uuid
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
-import json
 
 app = FastAPI(
     title="Furiosa LLM Mock Server",

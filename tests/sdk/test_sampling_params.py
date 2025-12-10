@@ -6,10 +6,10 @@ Based on Furiosa LLM SamplingParams specification:
 https://developer.furiosa.ai/latest/en/furiosa_llm/reference/sampling_params.html
 """
 
-import pytest
 from dataclasses import dataclass, field
 from typing import Optional
 
+import pytest
 
 # ============================================================================
 # Mock SamplingParams (Simulating furiosa_llm.SamplingParams)

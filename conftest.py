@@ -2,12 +2,13 @@
 Pytest Configuration and Fixtures for Furiosa QA Automation
 """
 
-import pytest
-import subprocess
-import time
-import requests
-import sys
 import os
+import subprocess
+import sys
+import time
+
+import pytest
+import requests
 
 # Add mock_server to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "mock_server"))
